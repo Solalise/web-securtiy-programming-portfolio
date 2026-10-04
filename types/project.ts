@@ -1,0 +1,20 @@
+export type Project = {
+  id: string;
+  title: string;
+  summary: string;
+  category: string;
+  techStack: string[];
+  thumbnail?: string;
+  overview: string;
+  problem: string;
+  features: string[];
+  role: string;
+  troubleshooting: string;
+  learned: string[];
+  githubUrl?: string;
+  demoUrl?: string;
+  period?: string;
+  teamSize?: string;
+  status?: string;
+  featured: boolean;
+};
