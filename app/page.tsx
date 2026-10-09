@@ -2,10 +2,14 @@ import Link from "next/link";
 
 import ProjectCard from "@/components/ProjectCard";
 import TechStackCard from "@/components/TechStackCard";
-import { projects } from "@/data/projects";
 import { techStack } from "@/data/techStack";
+import { getProjects } from "@/lib/projects";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const projects = await getProjects();
+
   return (
     <>
       <section className="grid gap-12 py-16 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">

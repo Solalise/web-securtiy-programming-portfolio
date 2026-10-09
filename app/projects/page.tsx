@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
 
 import ProjectList from "@/components/ProjectList";
-import { projects } from "@/data/projects";
+import { getProjects } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "프로젝트",
   description: "직접 기획하고 개발한 프로젝트와 문제 해결 경험을 소개합니다.",
 };
 
-export default function ProjectsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ProjectsPage() {
+  const projects = await getProjects();
+
   return (
     <section className="py-16 sm:py-24">
       <p className="mb-3 text-sm font-semibold text-blue-600">PROJECTS</p>

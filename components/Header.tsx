@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { logoutAction } from "@/actions/auth";
+
 const navigation = [
   { href: "/about", label: "소개" },
   { href: "/projects", label: "프로젝트" },
   { href: "/assignments", label: "과제" },
   { href: "/devlog", label: "개발 로그" },
-  { href: "/login", label: "관리자" },
 ] as const;
 
-export default function Header() {
+export default function Header({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -47,6 +48,33 @@ export default function Header() {
                 </li>
               );
             })}
+            {isAdmin ? (
+              <>
+                <li>
+                  <Link
+                    href="/admin"
+                    aria-current={pathname.startsWith("/admin") ? "page" : undefined}
+                    className={`inline-flex border-b-2 py-2 transition-colors focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${
+                      pathname.startsWith("/admin")
+                        ? "border-blue-600 text-blue-600"
+                        : "border-transparent hover:text-blue-600"
+                    }`}
+                  >
+                    관리자
+                  </Link>
+                </li>
+                <li>
+                  <form action={logoutAction}>
+                    <button
+                      type="submit"
+                      className="inline-flex border-b-2 border-transparent py-2 transition-colors hover:text-blue-600 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                    >
+                      로그아웃
+                    </button>
+                  </form>
+                </li>
+              </>
+            ) : null}
           </ul>
         </nav>
       </div>

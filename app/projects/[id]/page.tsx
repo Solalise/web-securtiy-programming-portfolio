@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ProjectThumbnail from "@/components/ProjectThumbnail";
-import { getProjectById, projects } from "@/data/projects";
+import { getProject, getProjects } from "@/lib/projects";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const projects = await getProjects();
+
   return projects.map((project) => ({ id: project.id }));
 }
 
@@ -13,7 +15,7 @@ export async function generateMetadata({
   params,
 }: PageProps<"/projects/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const project = getProjectById(id);
+  const project = await getProject(id);
 
   return project
     ? { title: project.title, description: project.summary }
@@ -24,7 +26,7 @@ export default async function ProjectDetailPage({
   params,
 }: PageProps<"/projects/[id]">) {
   const { id } = await params;
-  const project = getProjectById(id);
+  const project = await getProject(id);
 
   if (!project) {
     notFound();

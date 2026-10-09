@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { auth } from "@/auth";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
@@ -13,11 +14,13 @@ export const metadata: Metadata = {
   description: "개인 개발자 포트폴리오 웹사이트입니다.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const session = await auth();
+
   return (
     <html lang="ko">
       <body className="flex min-h-screen flex-col bg-white text-zinc-900 antialiased">
-        <Header />
+        <Header isAdmin={session?.user.role === "admin"} />
         <main className="mx-auto w-full max-w-6xl flex-1 px-5 sm:px-8">
           {children}
         </main>
