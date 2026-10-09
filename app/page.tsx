@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import mainPicture from "@/img/mainpicture.png";
 import ProjectCard from "@/components/ProjectCard";
 import TechStackCard from "@/components/TechStackCard";
 import { techStack } from "@/data/techStack";
@@ -41,41 +43,15 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div
-          className="relative min-h-80 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 p-5 sm:min-h-96 sm:p-8"
-          aria-label="개발 환경을 표현한 이미지 자리"
-          role="img"
-        >
-          <div className="absolute top-8 right-6 left-6 rounded-xl border border-zinc-200 bg-white sm:top-12 sm:right-10 sm:left-10">
-            <div className="flex h-10 items-center gap-2 border-b border-zinc-200 px-4">
-              <span className="size-2.5 rounded-full bg-zinc-300" />
-              <span className="size-2.5 rounded-full bg-zinc-300" />
-              <span className="size-2.5 rounded-full bg-blue-500" />
-              <span className="ml-3 font-mono text-[11px] text-zinc-400">
-                portfolio.tsx
-              </span>
-            </div>
-            <div className="space-y-4 p-5 font-mono text-xs sm:p-7 sm:text-sm">
-              <p>
-                <span className="text-blue-600">const</span>{" "}
-                <span className="text-zinc-800">developer</span>{" "}
-                <span className="text-zinc-400">=</span>{" "}
-                <span className="text-zinc-500">&#123;</span>
-              </p>
-              <p className="pl-4 text-zinc-500 sm:pl-6">
-                focus: <span className="text-blue-600">&quot;Web Security&quot;</span>,
-              </p>
-              <p className="pl-4 text-zinc-500 sm:pl-6">
-                role: <span className="text-blue-600">&quot;Backend&quot;</span>,
-              </p>
-              <p className="text-zinc-500">&#125;;</p>
-              <div className="h-px bg-zinc-100" />
-              <p className="text-zinc-400">{"// build, learn, secure."}</p>
-            </div>
-          </div>
-          <div className="absolute right-4 bottom-5 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-xs font-semibold text-blue-700 sm:right-7 sm:bottom-8">
-            SECURITY · BACKEND
-          </div>
+        <div className="relative min-h-80 sm:min-h-96">
+          <Image
+            src={mainPicture}
+            alt="노트북과 책, 화분이 놓인 개발 작업 공간"
+            fill
+            priority
+            sizes="(min-width: 1024px) 48vw, 100vw"
+            className="object-contain"
+          />
         </div>
       </section>
 
