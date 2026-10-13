@@ -2,28 +2,28 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-zinc-200 bg-zinc-50">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-5 py-8 text-sm text-zinc-500 sm:flex-row sm:items-end sm:justify-between sm:px-8">
+    <footer id="contact" className="bg-slate-950 text-slate-300">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-5 py-14 text-center sm:px-8">
         <div>
           <Link
             href="/"
-            className="text-lg font-bold tracking-tight text-zinc-950"
+            className="text-xl font-black tracking-[-0.03em] text-white"
             aria-label="홈으로 이동"
           >
-            BW<span className="text-blue-600">.</span>
+            BW.PORTFOLIO
           </Link>
-          <p className="mt-2">&copy; 2026 최보원.</p>
         </div>
-
-        <div className="flex gap-5 font-medium text-zinc-600">
-          {/* TODO: 실제 GitHub 및 이메일 주소로 교체 */}
-          <a className="transition-colors hover:text-blue-600" href="#">
-            GitHub
-          </a>
-          <a className="transition-colors hover:text-blue-600" href="#">
-            Email
-          </a>
-        </div>
+        <nav className="mt-7" aria-label="하단 메뉴">
+          <ul className="flex flex-wrap justify-center gap-x-7 gap-y-3 text-sm font-semibold">
+            <li><Link className="hover:text-white" href="/">Home</Link></li>
+            <li><Link className="hover:text-white" href="/about">About</Link></li>
+            <li><Link className="hover:text-white" href="/projects">Project</Link></li>
+            <li><Link className="hover:text-white" href="/assignments">Study</Link></li>
+            <li><Link className="hover:text-white" href="/#contact">Contact</Link></li>
+          </ul>
+        </nav>
+        <p className="mt-7 text-sm text-slate-400">개인 포트폴리오 웹사이트 | Next.js · TypeScript 기반 제작</p>
+        <p className="mt-3 text-xs text-slate-500">&copy; 2026 Bowon Portfolio. All rights reserved.</p>
       </div>
     </footer>
   );
