@@ -1,3 +1,4 @@
+// 공통 기술 스택 이름, 설명과 아이콘 문자를 수정하는 파일입니다.
 export type TechStack = {
   name: string;
   description: string;

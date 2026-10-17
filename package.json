@@ -6,7 +6,10 @@
     "dev": "node --require ./dns-preload.cjs ./node_modules/next/dist/bin/next dev",
     "build": "node --require ./dns-preload.cjs ./node_modules/next/dist/bin/next build",
     "start": "node --require ./dns-preload.cjs ./node_modules/next/dist/bin/next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "admin:check": "node scripts/check-admin.mjs",
+    "admin:create": "node scripts/create-admin.mjs",
+    "growth:seed": "node scripts/seed-growth-anchors.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

@@ -1,12 +1,30 @@
 import { growthSteps } from "@/data/growth";
 
-export default function GrowthTimeline() {
+export default function GrowthTimeline({
+  showHeading = true,
+}: {
+  showHeading?: boolean;
+}) {
   return (
-    <section className="border-t border-slate-200 py-16 sm:py-20" aria-labelledby="growth-title">
-      <p className="text-xs font-bold tracking-[0.22em] text-blue-600 sm:text-sm">GROWTH</p>
-      <h2 id="growth-title" className="mt-2 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">성장 과정</h2>
+    <section
+      className={showHeading ? "border-t border-slate-200 py-16 sm:py-20" : ""}
+      aria-labelledby={showHeading ? "growth-title" : undefined}
+    >
+      {showHeading ? (
+        <>
+          <p className="text-xs font-bold tracking-[0.22em] text-blue-600 sm:text-sm">
+            GROWTH
+          </p>
+          <h2
+            id="growth-title"
+            className="mt-2 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl"
+          >
+            성장 과정
+          </h2>
+        </>
+      ) : null}
 
-      <ol className="mt-11 grid gap-0 lg:grid-cols-5">
+      <ol className={`${showHeading ? "mt-11" : ""} grid gap-0 lg:grid-cols-5`}>
         {growthSteps.map((item, index) => (
           <li key={item.step} className="relative grid grid-cols-[2.5rem_1fr] gap-4 pb-9 last:pb-0 lg:block lg:pb-0 lg:pr-6">
             {index < growthSteps.length - 1 ? (

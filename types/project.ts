@@ -17,4 +17,5 @@ export type Project = {
   teamSize?: string;
   status?: string;
   featured: boolean;
+  createdAt?: string;
 };

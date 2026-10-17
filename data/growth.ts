@@ -1,3 +1,11 @@
+// 성장 과정 페이지의 제목, 소개 문구와 타임라인 단계를 수정하는 파일입니다.
+export const growthPageContent = {
+  eyebrow: "MY GROWTH JOURNEY",
+  title: "성장 과정",
+  description:
+    "웹 개발의 기초부터 백엔드와 인증을 거쳐 웹 보안으로 관심 분야를 넓혀 온 과정을 정리했습니다.",
+} as const;
+
 export type GrowthStep = {
   step: string;
   title: string;

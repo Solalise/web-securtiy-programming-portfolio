@@ -1,5 +1,6 @@
 import type { Project } from "@/types/project";
 
+// MongoDB가 비어 있을 때 한 번 등록되는 초기 프로젝트 데이터입니다. 운영 중 수정은 관리자 페이지를 사용하세요.
 export const projects: Project[] = [
   {
     id: "repotutor",

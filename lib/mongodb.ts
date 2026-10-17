@@ -1,5 +1,7 @@
 import mongoose, { type Mongoose } from "mongoose";
 
+import { configureMongoDns } from "@/mongodb-dns.cjs";
+
 type MongooseCache = {
   connection: Mongoose | null;
   promise: Promise<Mongoose> | null;
@@ -28,6 +30,7 @@ export async function connectDB(): Promise<Mongoose> {
   }
 
   if (!cache.promise) {
+    configureMongoDns();
     cache.promise = mongoose.connect(uri);
   }
 

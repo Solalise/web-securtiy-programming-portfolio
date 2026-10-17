@@ -12,6 +12,7 @@ import {
   updateProject,
 } from "@/lib/projects";
 import { requireAdmin } from "@/lib/require-admin";
+import { normalizeTechnology } from "@/lib/technology-usage";
 
 type RequiredProjectField =
   | "title"
@@ -43,7 +44,7 @@ function parseProjectForm(formData: FormData): {
     summary: getText(formData, "summary"),
     category: getText(formData, "category"),
     status: getText(formData, "status"),
-    techStack: getList(formData, "techStack"),
+    techStack: Array.from(new Set(getList(formData, "techStack").map(normalizeTechnology))),
     thumbnail: getText(formData, "thumbnail") || undefined,
     overview: getText(formData, "overview"),
     problem: getText(formData, "problem"),
@@ -84,6 +85,8 @@ function revalidateProjectPaths(...slugs: string[]): void {
   revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath("/admin/projects");
+  revalidatePath("/about");
+  revalidatePath("/growth");
 
   for (const slug of new Set(slugs)) {
     revalidatePath(`/projects/${slug}`);

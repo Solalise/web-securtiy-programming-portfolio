@@ -1,5 +1,15 @@
 import type { DevLog } from "@/types/devlog";
 
+// 개발 로그 페이지의 안내 문구와 각 로그 내용을 수정하는 파일입니다.
+export const devLogPageContent = {
+  eyebrow: "DEV LOG",
+  title: "개발 로그",
+  description: [
+    "프로젝트를 개발하며 겪은 문제와 해결 과정,",
+    "새롭게 배운 내용을 기록합니다.",
+  ],
+} as const;
+
 export const devLogs: DevLog[] = [
   {
     id: "mongodb-atlas-connection",

@@ -1,222 +1,104 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 
-import InterestCard from "@/components/InterestCard";
-import SkillGroup from "@/components/SkillGroup";
+import { deletePortfolioItemAction, savePortfolioItemAction, updateAboutAction, updateProfileAction } from "@/actions/portfolio-content";
+import { auth } from "@/auth";
+import FormSubmitButton from "@/components/FormSubmitButton";
+import TechnologyUsage from "@/components/TechnologyUsage";
+import { getPortfolioItems, getSiteContent } from "@/lib/portfolio-content";
+import { getProjects } from "@/lib/projects";
+import { calculateTechnologyUsage } from "@/lib/technology-usage";
+import type { PortfolioItem, PortfolioItemKind } from "@/types/portfolio-content";
 
-export const metadata: Metadata = {
-  title: "소개",
-  description: "최보원의 웹 보안 및 백엔드 개발 포트폴리오 소개",
-};
+export const metadata: Metadata = { title: "소개", description: "최보원의 웹 보안 및 백엔드 개발 역량과 학습 방향을 소개합니다." };
+export const dynamic = "force-dynamic";
 
-const interests = [
-  {
-    marker: "01",
-    title: "웹 보안",
-    description:
-      "웹 애플리케이션의 동작 구조와 취약점을 분석하고, 안전한 개발 방법을 학습하는 데 관심이 있습니다.",
-  },
-  {
-    marker: "02",
-    title: "백엔드 개발",
-    description:
-      "API, 데이터베이스, 인증과 같은 서버 측 기능을 구현하며 웹 서비스 전체 흐름을 이해하는 것을 목표로 합니다.",
-  },
-  {
-    marker: "03",
-    title: "취약점 분석",
-    description:
-      "실제 서비스에서 발생할 수 있는 보안 문제를 발견하고, 원인과 공격 흐름을 분석하는 역량을 키우고 있습니다.",
-  },
-];
+const statusLabels = { planned: "예정", "in-progress": "진행 중", completed: "완료" } as const;
 
-const skillGroups = [
-  {
-    title: "프론트엔드",
-    skills: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
-  },
-  {
-    title: "백엔드",
-    skills: ["Next.js Server Actions", "Route Handlers", "REST API"],
-  },
-  {
-    title: "데이터베이스",
-    skills: ["MongoDB", "Mongoose", "PostgreSQL", "Prisma"],
-  },
-  {
-    title: "인증 / 보안",
-    skills: ["Auth.js", "bcrypt", "JWT", "Web Security"],
-  },
-  {
-    title: "도구",
-    skills: ["Git", "GitHub", "Vercel", "VS Code"],
-  },
-];
+export default async function AboutPage({ searchParams }: PageProps<"/about">) {
+  const [session, content, projects, awards, certifications, roadmap, params] = await Promise.all([
+    auth(), getSiteContent(), getProjects(), getPortfolioItems("award"), getPortfolioItems("certification"), getPortfolioItems("roadmap"), searchParams,
+  ]);
+  const isAdmin = session?.user.role === "admin";
+  const technologies = calculateTechnologyUsage(projects, content.about.extraTechnologies);
+  const saved = Array.isArray(params.saved) ? params.saved[0] : params.saved;
+  const error = Array.isArray(params.error) ? params.error[0] : params.error;
 
-const learningSteps = [
-  {
-    label: "현재",
-    title: "웹 개발과 백엔드 기초 강화",
-    description: "Next.js · TypeScript · MongoDB · 인증",
-  },
-  {
-    label: "다음 단계",
-    title: "웹 취약점 분석과 모의해킹 심화",
-    description: "웹 구조 이해 · 취약점 실습 · 보안 프로젝트",
-  },
-  {
-    label: "장기 목표",
-    title: "리버싱과 시스템 보안으로 확장",
-    description: "시스템 구조 이해 · 리버싱 · 보안 연구",
-  },
-];
-
-const currentFocus = [
-  "Next.js와 TypeScript 기반 웹 개발",
-  "MongoDB를 활용한 데이터 처리",
-  "웹 인증 및 접근 제어",
-  "웹 취약점 분석 기초",
-  "프로젝트를 통한 실전 개발 경험",
-];
-
-export default function AboutPage() {
   return (
     <div className="py-16 sm:py-24">
       <section>
-        <p className="mb-3 text-sm font-semibold text-blue-600">ABOUT</p>
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl">
-          소개
-        </h1>
-        <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-600 sm:text-lg sm:leading-8">
-          웹 보안과 백엔드 개발을 중심으로 공부하고 있으며,
-          <br className="hidden sm:block" /> 취약점 분석과 보안 리서치 분야로
-          성장하는 것을 목표로 하고 있습니다.
-        </p>
+        <p className="text-sm font-bold tracking-[0.2em] text-blue-600">ABOUT</p>
+        <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">소개</h1>
+        {saved ? <p role="status" className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">변경 내용이 저장되었습니다.</p> : null}
+        {error ? <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error === "profile-image" ? "프로필 이미지는 1.5MB 이하의 JPG, PNG, WebP 파일만 사용할 수 있습니다." : "입력 내용을 확인해주세요."}</p> : null}
       </section>
 
-      <section className="mt-12 grid gap-8 border-t border-zinc-200 pt-12 sm:mt-16 sm:pt-16 lg:grid-cols-[19rem_minmax(0,1fr)] lg:gap-14">
-        <aside className="rounded-xl border border-zinc-200 bg-zinc-50 p-6 sm:p-8">
-          <div className="flex size-20 items-center justify-center rounded-full border border-blue-100 bg-blue-50 text-xl font-bold tracking-tight text-blue-700">
-            BW
+      <section id="profile" className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="grid lg:grid-cols-[minmax(18rem,0.8fr)_minmax(0,1.4fr)]">
+          <div className="relative min-h-80 bg-gradient-to-br from-blue-50 to-slate-100 lg:min-h-[34rem]">
+            {content.about.profileImage ? <Image src={content.about.profileImage} alt={`${content.about.name} 프로필 사진`} fill unoptimized sizes="(max-width: 1024px) 100vw, 38vw" className="object-cover" /> : <div className="absolute inset-0 flex flex-col items-center justify-center text-blue-700"><svg viewBox="0 0 120 120" aria-hidden="true" className="size-32 text-blue-200"><circle cx="60" cy="42" r="24" fill="currentColor" /><path d="M18 112c2-28 19-44 42-44s40 16 42 44" fill="currentColor" /></svg><span className="mt-3 text-sm font-bold text-slate-500">기본 프로필 이미지</span></div>}
           </div>
-          <h2 className="mt-6 text-2xl font-bold tracking-tight text-zinc-950">
-            최보원
-          </h2>
-          <p className="mt-1 text-sm text-zinc-500">정보보호학과</p>
-
-          <dl className="mt-8 space-y-5 border-t border-zinc-200 pt-6">
-            <ProfileInfo label="집중 분야" value="웹 보안" />
-            <ProfileInfo label="관심 분야" value="백엔드 개발" />
-            <ProfileInfo label="목표" value="취약점 분석 · 모의해킹" />
-          </dl>
-        </aside>
-
-        <div className="min-w-0 lg:py-2">
-          <p className="text-sm font-semibold text-blue-600">PROFILE</p>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-zinc-950 sm:text-3xl">
-            프로필
-          </h2>
-          <div className="mt-6 max-w-3xl space-y-5 text-base leading-8 text-zinc-600">
-            <p>정보보호학과에서 웹 개발과 보안을 함께 공부하고 있습니다.</p>
-            <p>
-              단순히 기능을 구현하는 것에 그치지 않고, 웹 애플리케이션이 어떤
-              구조로 동작하는지 이해하고 그 과정에서 발생할 수 있는 보안 문제를
-              분석하는 것에 관심이 있습니다.
-            </p>
-            <p>
-              현재는 Next.js와 TypeScript를 중심으로 프론트엔드와 백엔드를 함께
-              학습하고 있으며, MongoDB와 인증 구조 등 실제 웹 서비스에 필요한
-              기술을 익히고 있습니다.
-            </p>
-            <p>
-              장기적으로는 웹 취약점 분석과 모의해킹 역량을 쌓고, 이후 리버싱과
-              시스템 보안 분야까지 학습 범위를 넓히는 것이 목표입니다.
-            </p>
+          <div className="p-6 sm:p-10 lg:p-12">
+            <p className="text-sm font-bold tracking-[0.18em] text-blue-600">PROFILE</p>
+            <h2 className="mt-2 text-2xl font-extrabold text-slate-950 sm:text-3xl">프로필</h2>
+            <dl className="mt-7 border-y border-slate-200"><ProfileRow label="이름" value={content.about.name} /><ProfileRow label="학교 / 전공" value={content.about.schoolMajor} /><ProfileRow label="동아리 활동" value={content.about.club} /><ProfileRow label="관심 분야" value={content.about.interestSummary} /></dl>
+            <div className="mt-7 space-y-4 text-sm leading-7 text-slate-600 sm:text-base">{content.about.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
+            {isAdmin ? <ProfileEdit content={content.about} /> : null}
           </div>
         </div>
       </section>
 
-      <section className="mt-16 border-t border-zinc-200 pt-16 sm:mt-24 sm:pt-20">
-        <SectionHeading eyebrow="INTERESTS" title="관심 분야" />
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {interests.map((interest) => (
-            <InterestCard key={interest.title} {...interest} />
-          ))}
+      {isAdmin ? <AboutEdit content={content.about} /> : null}
+
+      <Section id="security-interest" eyebrow="SECURITY INTEREST" title="웹 보안 관심 분야">
+        <div className="grid gap-5 lg:grid-cols-3">
+          <FocusCard number="01" title="주요 관심 분야 · 웹 취약점 분석" text={content.about.securityFocus} />
+          <FocusCard number="02" title="현재 집중적으로 학습하는 분야" text={content.about.currentStudy} />
+          <FocusCard number="03" title="향후 확장하고 싶은 분야" text={content.about.futureDirection} />
         </div>
-      </section>
+      </Section>
 
-      <section className="mt-16 border-t border-zinc-200 pt-16 sm:mt-24 sm:pt-20">
-        <SectionHeading eyebrow="SKILLS" title="기술 스택" />
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {skillGroups.map((group) => (
-            <SkillGroup key={group.title} {...group} />
-          ))}
+      <Section id="technology" eyebrow="SKILLS" title="프로젝트 기반 기술 스택">
+        <p className="mb-7 max-w-3xl text-sm leading-7 text-slate-500">각 비율은 숙련도가 아니라 카테고리 안에서 집계된 기술 사용 빈도입니다. 실제 프로젝트 데이터만 사용하며, 각 카테고리의 합계는 100%입니다. 기술을 선택하면 연결된 프로젝트를 확인할 수 있습니다.</p>
+        <TechnologyUsage technologies={technologies} />
+      </Section>
+
+      <Section id="achievement" eyebrow="ACHIEVEMENTS" title="Achievements & Certifications">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <ItemCollection title="수상 경력" empty="등록된 수상 경력이 없습니다." items={awards} kind="award" isAdmin={isAdmin} />
+          <ItemCollection title="자격증" empty="등록된 자격증이 없습니다." items={certifications} kind="certification" isAdmin={isAdmin} />
         </div>
-      </section>
+      </Section>
 
-      <section className="mt-16 border-t border-zinc-200 pt-16 sm:mt-24 sm:pt-20">
-        <SectionHeading eyebrow="DIRECTION" title="학습 방향" />
-        <ol className="mt-8 grid gap-3 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-stretch">
-          {learningSteps.map((step, index) => (
-            <li key={step.label} className="contents">
-              <article className="rounded-xl border border-zinc-200 bg-white p-6">
-                <p className="text-xs font-semibold text-blue-600">{step.label}</p>
-                <h3 className="mt-3 font-bold leading-6 text-zinc-950">
-                  {step.title}
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-zinc-500">
-                  {step.description}
-                </p>
-              </article>
-              {index < learningSteps.length - 1 && (
-                <span
-                  className="flex items-center justify-center py-1 text-zinc-300 lg:px-1"
-                  aria-hidden="true"
-                >
-                  <span className="lg:hidden">↓</span>
-                  <span className="hidden lg:inline">→</span>
-                </span>
-              )}
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="mt-16 rounded-xl border border-zinc-200 bg-zinc-50 p-6 sm:mt-20 sm:p-8">
-        <h2 className="text-xl font-bold tracking-tight text-zinc-950 sm:text-2xl">
-          현재 집중하고 있는 것
-        </h2>
-        <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-          {currentFocus.map((item) => (
-            <li key={item} className="flex gap-3 text-sm leading-6 text-zinc-600">
-              <span
-                className="mt-2.5 size-1.5 shrink-0 rounded-full bg-blue-600"
-                aria-hidden="true"
-              />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <Section id="roadmap" eyebrow="ROADMAP" title="Roadmap — 성장 로드맵">
+        {roadmap.length ? <ol className="relative ml-3 border-l border-slate-200 pl-7">{roadmap.map((item) => <li key={item.id} className="relative pb-8 last:pb-0"><span className={"absolute -left-[2.15rem] top-1 flex size-4 items-center justify-center rounded-full border-2 " + (item.status === "completed" ? "border-blue-600 bg-blue-600" : item.status === "in-progress" ? "border-blue-600 bg-white" : "border-slate-300 bg-white")}>{item.status === "completed" ? <span className="text-[8px] text-white">✓</span> : null}</span><article className={"rounded-xl border p-5 " + (item.status === "in-progress" ? "border-blue-200 bg-blue-50/40" : "border-slate-200 bg-white")}><div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-extrabold text-slate-950">{item.title}</h3><span className="text-xs font-bold text-blue-700">{item.status ? statusLabels[item.status] : "예정"}</span></div>{item.category ? <p className="mt-2 text-xs font-bold text-slate-400">{item.category} · {item.period}</p> : null}{item.description ? <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-600">{item.description}</p> : null}{isAdmin ? <ItemAdmin item={item} /> : null}</article></li>)}</ol> : <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-sm text-slate-500">등록된 로드맵이 없습니다.</p>}
+        {isAdmin ? <details className="mt-6 rounded-xl border border-blue-200 bg-blue-50 p-5"><summary className="cursor-pointer text-sm font-bold text-blue-700">로드맵 단계 추가</summary><ItemForm kind="roadmap" /></details> : null}
+      </Section>
     </div>
   );
 }
 
-function ProfileInfo({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-xs font-semibold text-zinc-400">{label}</dt>
-      <dd className="mt-1 text-sm font-medium text-zinc-800">{value}</dd>
-    </div>
-  );
+function Section({ id, eyebrow, title, children }: { id: string; eyebrow: string; title: string; children: React.ReactNode }) { return <section id={id} className="mt-16 border-t border-slate-200 pt-16 sm:mt-24 sm:pt-20"><p className="text-sm font-bold tracking-[0.18em] text-blue-600">{eyebrow}</p><h2 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">{title}</h2><div className="mt-8">{children}</div></section>; }
+function ProfileRow({ label, value }: { label: string; value: string }) { return <div className="grid grid-cols-[7rem_minmax(0,1fr)] gap-4 border-b border-slate-200 py-4 last:border-b-0 sm:grid-cols-[9rem_minmax(0,1fr)]"><dt className="text-sm font-bold text-slate-500">{label}</dt><dd className="break-words text-sm font-bold leading-6 text-slate-900">{value}</dd></div>; }
+function FocusCard({ number, title, text }: { number: string; title: string; text: string }) { return <article className="rounded-xl border border-slate-200 bg-white p-6"><span className="text-xs font-black text-blue-600">{number}</span><h3 className="mt-3 font-extrabold text-slate-950">{title}</h3><p className="mt-4 break-keep text-sm leading-7 text-slate-600">{text}</p></article>; }
+
+function ProfileEdit({ content }: { content: Awaited<ReturnType<typeof getSiteContent>>["about"] }) {
+  const input = "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm";
+  return <details id="profile-edit" className="mt-8 rounded-xl border border-blue-200 bg-blue-50 p-5"><summary className="cursor-pointer text-sm font-bold text-blue-700">프로필 수정</summary><form action={updateProfileAction} className="mt-5 grid gap-3"><label className="text-xs font-bold text-slate-600">프로필 사진<input name="profileImage" type="file" accept="image/jpeg,image/png,image/webp" className={input + " mt-2 block w-full"} /></label><p className="text-xs text-slate-500">JPG, PNG, WebP · 최대 1.5MB</p>{content.profileImage ? <label className="flex items-center gap-2 text-xs text-slate-600"><input type="checkbox" name="removeProfileImage" value="true" /> 현재 사진 삭제</label> : null}<input name="name" required defaultValue={content.name} className={input} placeholder="이름" /><input name="schoolMajor" required defaultValue={content.schoolMajor} className={input} placeholder="학교 / 전공" /><input name="club" required defaultValue={content.club} className={input} placeholder="동아리 활동" /><input name="interestSummary" required defaultValue={content.interestSummary} className={input} placeholder="관심 분야" /><div><FormSubmitButton>프로필 저장</FormSubmitButton></div></form></details>;
 }
 
-function SectionHeading({ eyebrow, title }: { eyebrow: string; title: string }) {
-  return (
-    <div>
-      <p className="text-sm font-semibold text-blue-600">{eyebrow}</p>
-      <h2 className="mt-2 text-2xl font-bold tracking-tight text-zinc-950 sm:text-3xl">
-        {title}
-      </h2>
-    </div>
-  );
+function AboutEdit({ content }: { content: Awaited<ReturnType<typeof getSiteContent>>["about"] }) {
+  const input = "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm";
+  return <details id="about-edit" className="mt-8 rounded-xl border border-blue-200 bg-blue-50 p-5"><summary className="cursor-pointer text-sm font-bold text-blue-700">관심 분야 및 기술 항목 편집</summary><form action={updateAboutAction} className="mt-5 grid gap-3 sm:grid-cols-2"><textarea name="paragraphs" defaultValue={content.paragraphs.join("\n")} rows={4} className={input + " sm:col-span-2"} placeholder="소개 문단 · 한 줄에 하나" /><textarea name="securityFocus" required defaultValue={content.securityFocus} rows={5} className={input + " sm:col-span-2"} /><textarea name="currentStudy" required defaultValue={content.currentStudy} rows={5} className={input + " sm:col-span-2"} /><textarea name="futureDirection" required defaultValue={content.futureDirection} rows={5} className={input + " sm:col-span-2"} /><textarea name="extraTechnologies" defaultValue={content.extraTechnologies.join("\n")} rows={5} className={input + " sm:col-span-2"} placeholder="기술 분류: 카테고리 | 기술명 | 학습 중/사용 경험 | 별칭1, 별칭2" /><p className="text-xs leading-5 text-slate-500 sm:col-span-2">같은 기술을 여러 카테고리에 배치하려면 카테고리별로 한 줄씩 입력하세요. 실제 프로젝트 사용 기록이 없는 기술은 차트 비율에 포함되지 않습니다.</p><div><FormSubmitButton>About 저장</FormSubmitButton></div></form></details>;
+}
+
+function ItemCollection({ title, empty, items, kind, isAdmin }: { title: string; empty: string; items: PortfolioItem[]; kind: PortfolioItemKind; isAdmin: boolean }) {
+  return <section className="rounded-xl border border-slate-200 bg-white p-6"><h3 className="text-lg font-extrabold text-slate-950">{title}</h3>{items.length ? <ul className="mt-5 space-y-4">{items.map((item) => <li key={item.id} className="rounded-lg bg-slate-50 p-4"><div className="flex items-start justify-between gap-3"><div><p className="font-bold text-slate-900">{item.title}</p><p className="mt-1 text-xs text-slate-500">{item.organization}{item.date ? " · " + item.date : ""}</p></div>{item.status ? <span className="shrink-0 rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">{statusLabels[item.status]}</span> : null}</div>{item.description ? <p className="mt-3 text-sm leading-6 text-slate-600">{item.description}</p> : null}{item.link ? <a href={item.link} target="_blank" rel="noreferrer" className="mt-3 inline-block text-xs font-bold text-blue-600">증빙 자료 →</a> : null}{isAdmin ? <ItemAdmin item={item} /> : null}</li>)}</ul> : <p className="mt-5 text-sm text-slate-500">{empty}</p>}{isAdmin ? <details className="mt-5 border-t border-slate-200 pt-4"><summary className="cursor-pointer text-sm font-bold text-blue-700">항목 추가</summary><ItemForm kind={kind} /></details> : null}</section>;
+}
+
+function ItemAdmin({ item }: { item: PortfolioItem }) { return <details className="mt-4 border-t border-slate-200 pt-3"><summary className="cursor-pointer text-xs font-bold text-blue-700">편집</summary><ItemForm kind={item.kind} item={item} /><form action={deletePortfolioItemAction} className="mt-3"><input type="hidden" name="kind" value={item.kind} /><input type="hidden" name="databaseId" value={item.id} /><button type="submit" className="text-xs font-bold text-red-600">삭제</button></form></details>; }
+
+function ItemForm({ kind, item }: { kind: PortfolioItemKind; item?: PortfolioItem }) {
+  const input = "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm";
+  return <form action={savePortfolioItemAction} className="mt-4 grid gap-3"><input type="hidden" name="kind" value={kind} />{item ? <input type="hidden" name="databaseId" value={item.id} /> : null}<input name="title" required defaultValue={item?.title} className={input} placeholder={kind === "roadmap" ? "단계명" : "이름"} /><textarea name="description" defaultValue={item?.description} rows={3} className={input} placeholder="설명 / 상세 내용" /><input name="organization" defaultValue={item?.organization} className={input} placeholder="주최·발급 기관" /><input name="category" defaultValue={item?.category} className={input} placeholder="학습 분야 / 카테고리" /><input name="date" type="date" defaultValue={item?.date} className={input} /><input name="period" defaultValue={item?.period} className={input} placeholder="목표 기간" /><select name="status" defaultValue={item?.status ?? "planned"} className={input}><option value="planned">예정 / 준비 중</option><option value="in-progress">진행 중</option><option value="completed">완료 / 취득 완료</option></select><input name="link" type="url" defaultValue={item?.link} className={input} placeholder="증빙 자료 URL" /><input name="order" type="number" defaultValue={item?.order ?? 0} className={input} placeholder="표시 순서" /><div><FormSubmitButton>{item ? "저장" : "추가"}</FormSubmitButton></div></form>;
 }

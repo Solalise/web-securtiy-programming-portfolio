@@ -1,3 +1,6 @@
+import Link from "next/link";
+
+import { logoutAction } from "@/actions/auth";
 import { quickLinks } from "@/data/site";
 
 function QuickLinkIcon({ icon }: { icon: "github" | "blog" }) {
@@ -17,7 +20,7 @@ function QuickLinkIcon({ icon }: { icon: "github" | "blog" }) {
   );
 }
 
-export default function FloatingQuickLinks() {
+export default function FloatingQuickLinks({ isAdmin }: { isAdmin: boolean }) {
   return (
     <aside className="fixed right-3 bottom-3 z-40 flex flex-col gap-2 sm:right-6 sm:bottom-6" aria-label="외부 바로가기">
       {quickLinks.map((link) => (
@@ -26,6 +29,14 @@ export default function FloatingQuickLinks() {
           <span className="hidden text-xs font-bold sm:inline">{link.label}</span>
         </a>
       ))}
+      {isAdmin ? (
+        <>
+          <Link href="/admin" aria-label="관리자 페이지" className="flex size-11 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-blue-700 shadow-sm hover:bg-blue-100 sm:h-11 sm:w-auto sm:rounded-lg sm:px-4"><span className="text-xs font-bold">관리 중</span></Link>
+          <form action={logoutAction}><button type="submit" className="flex size-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-blue-300 hover:text-blue-600 sm:h-11 sm:w-auto sm:rounded-lg sm:px-4"><span className="text-xs font-bold">로그아웃</span></button></form>
+        </>
+      ) : (
+        <Link href="/login" aria-label="관리자 로그인" className="flex size-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-blue-300 hover:text-blue-600 sm:h-11 sm:w-auto sm:rounded-lg sm:px-4"><span className="text-xs font-bold">관리자</span></Link>
+      )}
     </aside>
   );
 }

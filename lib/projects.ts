@@ -1,12 +1,13 @@
 import { cache } from "react";
 import { isValidObjectId, type HydratedDocument } from "mongoose";
+import { connection } from "next/server";
 
 import { projects as seedProjects } from "@/data/projects";
 import { connectDB } from "@/lib/mongodb";
 import ProjectModel, { type ProjectDocument } from "@/models/Project";
 import type { Project } from "@/types/project";
 
-export type ProjectInput = Omit<Project, "id" | "status"> & {
+export type ProjectInput = Omit<Project, "id" | "status" | "createdAt"> & {
   slug: string;
   status: string;
 };
@@ -56,6 +57,7 @@ function toProject(document: HydratedProject): Project {
     teamSize: document.teamSize ?? undefined,
     status: document.status,
     featured: document.featured,
+    createdAt: document.createdAt.toISOString(),
   };
 }
 
@@ -115,6 +117,18 @@ export async function getProjects(): Promise<Project[]> {
   await seedProjectsIfEmpty();
 
   const projects = await ProjectModel.find().sort({ _id: 1 }).exec();
+
+  return projects.map(toProject);
+}
+
+export async function getLatestProjects(limit = 3): Promise<Project[]> {
+  await connection();
+  await seedProjectsIfEmpty();
+
+  const projects = await ProjectModel.find()
+    .sort({ createdAt: -1, _id: -1 })
+    .limit(limit)
+    .exec();
 
   return projects.map(toProject);
 }
