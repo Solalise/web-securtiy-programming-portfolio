@@ -175,6 +175,7 @@ export default async function ProjectDetailPage({
           )}
         </aside>
       </div>
+
     </article>
   );
 }

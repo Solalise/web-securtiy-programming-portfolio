@@ -46,8 +46,8 @@ export const projectImagePaths: Record<string, string> = {
 };
 
 export const quickLinks = [
-  { label: "GitHub", href: "#", icon: "github" },
-  { label: "Blog", href: "#", icon: "blog" },
+  { label: "GitHub", href: "https://github.com/Solalise", icon: "github" },
+  { label: "Blog", href: "https://choebowon0.tistory.com/", icon: "blog" },
 ] as const;
 
 export const interestBadges = [

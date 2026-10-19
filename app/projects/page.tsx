@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 
+import { auth } from "@/auth";
 import ProjectList from "@/components/ProjectList";
+import {
+  getProjectCommentsBySlugs,
+  getProjectInteractionCounts,
+  getLikedProjectSlugs,
+} from "@/lib/project-interactions";
 import { getProjects } from "@/lib/projects";
 
 export const metadata: Metadata = {
@@ -11,7 +18,23 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
-  const projects = await getProjects();
+  const [projects, session, cookieStore] = await Promise.all([
+    getProjects(),
+    auth(),
+    cookies(),
+  ]);
+  const projectSlugs = projects.map((project) => project.id);
+  const visitorId = cookieStore.get("portfolio_like_visitor")?.value;
+  const likeActorIds = session?.user?.id
+    ? [`user:${session.user.id}`, session.user.id]
+    : visitorId
+      ? [`visitor:${visitorId}`]
+      : [];
+  const [interactionCounts, commentsByProject, likedProjectSlugs] = await Promise.all([
+    getProjectInteractionCounts(projectSlugs),
+    getProjectCommentsBySlugs(projectSlugs),
+    getLikedProjectSlugs(likeActorIds),
+  ]);
 
   return (
     <section className="py-16 sm:py-24">
@@ -25,7 +48,12 @@ export default async function ProjectsPage() {
       </p>
 
       <div className="mt-10 sm:mt-12">
-        <ProjectList projects={projects} />
+        <ProjectList
+          projects={projects}
+          interactionCounts={interactionCounts}
+          commentsByProject={commentsByProject}
+          likedProjectSlugs={likedProjectSlugs}
+        />
       </div>
     </section>
   );

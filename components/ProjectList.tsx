@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 
+import ProjectCommentDialog from "@/components/ProjectCommentDialog";
 import ProjectCard from "@/components/ProjectCard";
+import type { ProjectComment } from "@/lib/project-interactions";
 import type { Project } from "@/types/project";
 
 const filters = ["전체", "개인 프로젝트", "팀 프로젝트"] as const;
@@ -11,6 +13,9 @@ type ProjectFilter = (typeof filters)[number];
 
 type ProjectListProps = {
   projects: Project[];
+  interactionCounts: Record<string, { likes: number; comments: number }>;
+  commentsByProject: Record<string, ProjectComment[]>;
+  likedProjectSlugs: string[];
 };
 
 function matchesFilter(project: Project, filter: ProjectFilter): boolean {
@@ -19,9 +24,15 @@ function matchesFilter(project: Project, filter: ProjectFilter): boolean {
   return filter === "팀 프로젝트" ? isTeamProject : !isTeamProject;
 }
 
-export default function ProjectList({ projects }: ProjectListProps) {
+export default function ProjectList({
+  projects,
+  interactionCounts,
+  commentsByProject,
+  likedProjectSlugs,
+}: ProjectListProps) {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<ProjectFilter>("전체");
+  const [commentProjectId, setCommentProjectId] = useState<string | null>(null);
 
   const filteredProjects = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -85,7 +96,13 @@ export default function ProjectList({ projects }: ProjectListProps) {
       {filteredProjects.length > 0 ? (
         <div className="mt-4 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <ProjectCard
+              key={project.id}
+              project={project}
+              interactionCount={interactionCounts[project.id] ?? { likes: 0, comments: 0 }}
+              likedByCurrentUser={likedProjectSlugs.includes(project.id)}
+              onOpenComments={() => setCommentProjectId(project.id)}
+            />
           ))}
         </div>
       ) : (
@@ -96,6 +113,14 @@ export default function ProjectList({ projects }: ProjectListProps) {
           </p>
         </div>
       )}
+
+      {commentProjectId ? (
+        <ProjectCommentDialog
+          project={projects.find((project) => project.id === commentProjectId)!}
+          comments={commentsByProject[commentProjectId] ?? []}
+          onClose={() => setCommentProjectId(null)}
+        />
+      ) : null}
     </div>
   );
 }
