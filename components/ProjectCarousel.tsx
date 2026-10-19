@@ -39,7 +39,7 @@ function ProjectImage({ project }: { project: ShowcaseProject }) {
         <img
           src={project.imageSrc}
           alt={`${project.title} 프로젝트 화면`}
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full bg-white object-contain"
           onError={() => setHasError(true)}
         />
       ) : null}

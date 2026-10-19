@@ -20,7 +20,6 @@ export const mainNavigation = [
   { href: "/about", label: "About" },
   { href: "/projects", label: "Project" },
   { href: "/experiences", label: "Experience & Labs" },
-  { href: "/growth", label: "Growth Journey" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
@@ -34,7 +33,6 @@ export const footerNavigation = [
   { href: "/about", label: "About" },
   { href: "/projects", label: "Project" },
   { href: "/experiences", label: "Experience & Labs" },
-  { href: "/growth", label: "Growth Journey" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
@@ -42,6 +40,9 @@ export const projectImagePaths: Record<string, string> = {
   repotutor: "/images/projects/repotutor.png",
   travelguard: "/images/projects/travelguard.png",
   portfolio: "/images/projects/portfolio.png",
+  "portfolio-semester1": "/images/projects/portfolio-semester1.png",
+  majormate: "/images/projects/majormate.png",
+  "security-guide": "/images/projects/security-guide.png",
 };
 
 export const quickLinks = [

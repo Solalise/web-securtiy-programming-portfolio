@@ -20,9 +20,8 @@ export default async function ProjectsPage() {
         프로젝트
       </h1>
       <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-600 sm:text-lg sm:leading-8">
-        직접 기획하고 개발한 프로젝트와 수업 프로젝트를 정리했습니다.
-        <br className="hidden sm:block" /> 각 프로젝트에서 맡은 역할과 구현 과정,
-        문제 해결 경험을 확인할 수 있습니다.
+        제가 직접 참여하여 진행한 팀 프로젝트와 개인 프로젝트가 정리되어 있습니다.
+        <br className="hidden sm:block" /> 각 프로젝트에서 맡은 역할과 프로젝트가 제공하는 기능들을 확인할 수 있습니다.
       </p>
 
       <div className="mt-10 sm:mt-12">

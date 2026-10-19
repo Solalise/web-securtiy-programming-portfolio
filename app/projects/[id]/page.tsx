@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ProjectThumbnail from "@/components/ProjectThumbnail";
+import { getProjectStatusLabel } from "@/data/projects";
+import { projectImagePaths } from "@/data/site";
 import { getProject, getProjects } from "@/lib/projects";
 
 export async function generateStaticParams() {
@@ -94,6 +96,8 @@ export default async function ProjectDetailPage({
         <ProjectThumbnail
           title={project.title}
           category={project.category}
+          status={getProjectStatusLabel(project)}
+          imageSrc={project.thumbnail || projectImagePaths[project.id]}
           size="hero"
         />
       </section>
@@ -185,7 +189,7 @@ function DetailSection({
   return (
     <section className="rounded-xl border border-zinc-200 bg-white p-6 sm:p-8">
       <h2 className="text-xl font-bold tracking-tight text-zinc-950">{title}</h2>
-      <div className="mt-4 text-sm leading-7 text-zinc-600 sm:text-base sm:leading-8">
+      <div className="mt-4 whitespace-pre-line text-sm leading-7 text-zinc-600 sm:text-base sm:leading-8">
         {children}
       </div>
     </section>

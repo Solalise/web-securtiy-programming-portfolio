@@ -38,7 +38,7 @@ globalForProjectSeed.projectSeedState = seedState;
 type HydratedProject = HydratedDocument<ProjectDocument>;
 
 function toProject(document: HydratedProject): Project {
-  return {
+  const project = {
     id: document.slug,
     title: document.title,
     summary: document.summary,
@@ -59,6 +59,22 @@ function toProject(document: HydratedProject): Project {
     featured: document.featured,
     createdAt: document.createdAt.toISOString(),
   };
+
+  return project.id === "security-guide"
+    ? {
+        ...project,
+        techStack: ["HTML", "CSS", "JavaScript"],
+        thumbnail: "/images/projects/security-guide.png",
+        teamSize: "팀 프로젝트",
+        status: "완료",
+      }
+    : project.id === "repotutor"
+      ? {
+          ...project,
+          ...seedProjects.find((seedProject) => seedProject.id === "repotutor"),
+          createdAt: project.createdAt,
+        }
+    : project;
 }
 
 function toAdminProject(document: HydratedProject): AdminProject {
@@ -83,12 +99,6 @@ async function seedProjectsIfEmpty(): Promise<void> {
     seedState.promise = (async () => {
       await connectDB();
       await ProjectModel.init();
-
-      const projectCount = await ProjectModel.estimatedDocumentCount();
-
-      if (projectCount > 0) {
-        return;
-      }
 
       await ProjectModel.bulkWrite(
         seedProjects.map(({ id, ...project }) => ({

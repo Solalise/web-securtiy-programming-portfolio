@@ -1,12 +1,14 @@
 import { model, models, Schema, type Model } from "mongoose";
 
-import type { ExperienceCategory } from "@/types/experience";
+import type { ExperienceCategory, ExperienceStatus } from "@/types/experience";
 
 export interface ExperienceDocument {
   title: string;
   category: ExperienceCategory;
   summary: string;
   organization?: string;
+  environment?: string;
+  status?: ExperienceStatus;
   startDate?: string;
   endDate?: string;
   technologies: string[];
@@ -15,6 +17,8 @@ export interface ExperienceDocument {
   process?: string;
   problemsAndSolutions?: string;
   resultsAndLearnings?: string;
+  results?: string;
+  learnings?: string;
   images: string[];
   references: Array<{ label: string; url: string }>;
   featured: boolean;
@@ -41,6 +45,8 @@ const experienceSchema = new Schema<ExperienceDocument>(
     },
     summary: { type: String, required: true, trim: true, maxlength: 300 },
     organization: { type: String, trim: true, maxlength: 120 },
+    environment: { type: String, trim: true, maxlength: 500 },
+    status: { type: String, enum: ["completed", "in-progress"], default: "completed" },
     startDate: { type: String, trim: true },
     endDate: { type: String, trim: true },
     technologies: { type: [String], default: [] },
@@ -49,6 +55,8 @@ const experienceSchema = new Schema<ExperienceDocument>(
     process: { type: String, trim: true, maxlength: 10000 },
     problemsAndSolutions: { type: String, trim: true, maxlength: 10000 },
     resultsAndLearnings: { type: String, trim: true, maxlength: 10000 },
+    results: { type: String, trim: true, maxlength: 10000 },
+    learnings: { type: String, trim: true, maxlength: 10000 },
     images: { type: [String], default: [] },
     references: { type: [referenceSchema], default: [] },
     featured: { type: Boolean, required: true, default: false, index: true },

@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import ProjectThumbnail from "@/components/ProjectThumbnail";
+import { getProjectStatusLabel } from "@/data/projects";
+import { projectImagePaths } from "@/data/site";
 import type { Project } from "@/types/project";
 
 type ProjectCardProps = {
@@ -15,7 +17,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         aria-label={`${project.title} 자세히 보기`}
         className="border-b border-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-600"
       >
-        <ProjectThumbnail title={project.title} category={project.category} />
+        <ProjectThumbnail title={project.title} category={project.category} status={getProjectStatusLabel(project)} imageSrc={project.thumbnail || projectImagePaths[project.id]} />
       </Link>
 
       <div className="flex flex-1 flex-col p-6">

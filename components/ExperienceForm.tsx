@@ -11,6 +11,7 @@ export function getExperienceFormErrorMessage(error: string | string[] | undefin
   const code = Array.isArray(error) ? error[0] : error;
   if (code === "required") return "제목, 카테고리, 요약, 개요는 필수 입력값입니다.";
   if (code === "invalid-category") return "올바른 카테고리를 선택해 주세요.";
+  if (code === "invalid-status") return "올바른 진행 상태를 선택해 주세요.";
   if (code === "invalid-date") return "날짜 형식과 시작일·종료일 순서를 확인해 주세요.";
   if (code === "invalid-url") return "이미지와 참고 자료에는 http 또는 https URL만 입력할 수 있습니다.";
   if (code === "save-failed") return "기록을 저장하지 못했습니다. 입력 내용을 확인한 뒤 다시 시도해 주세요.";
@@ -28,7 +29,9 @@ export default function ExperienceForm({ experience, errorMessage }: { experienc
         <legend className="px-2 text-lg font-extrabold text-slate-950">기본 정보</legend>
         <FormField label="제목" name="title"><input className={inputClassName} id="title" name="title" required maxLength={120} defaultValue={experience?.title} /></FormField>
         <FormField label="카테고리" name="category" hint="일반 Linux 활용은 일반 실습, 보안 분석 목적의 Linux 실습은 보안 실습으로 분류"><select className={inputClassName} id="category" name="category" required defaultValue={experience?.category ?? "activity"}>{experienceCategories.map((category) => <option key={category.value} value={category.value}>{category.label} · {category.shortLabel}</option>)}</select></FormField>
+        <FormField label="진행 상태" name="status"><select className={inputClassName} id="status" name="status" required defaultValue={experience?.status ?? "completed"}><option value="completed">완료</option><option value="in-progress">진행 중</option></select></FormField>
         <FormField label="활동 기관 / 실습 환경" name="organization"><input className={inputClassName} id="organization" name="organization" maxLength={120} defaultValue={experience?.organization} /></FormField>
+        <div className="sm:col-span-2"><FormField label="Environment · 실행 환경" name="environment"><input className={inputClassName} id="environment" name="environment" maxLength={500} defaultValue={experience?.environment} /></FormField></div>
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField label="시작일" name="startDate"><input className={inputClassName} id="startDate" name="startDate" type="date" defaultValue={experience?.startDate} /></FormField>
           <FormField label="종료일" name="endDate"><input className={inputClassName} id="endDate" name="endDate" type="date" defaultValue={experience?.endDate} /></FormField>
@@ -42,9 +45,10 @@ export default function ExperienceForm({ experience, errorMessage }: { experienc
         <legend className="px-2 text-lg font-extrabold text-slate-950">상세 기록</legend>
         <FormField label="Overview · 개요" name="overview"><textarea className={textareaClassName} id="overview" name="overview" required maxLength={5000} rows={5} defaultValue={experience?.overview} /></FormField>
         <FormField label="Role & Objectives · 역할 및 목표" name="roleAndObjectives"><textarea className={textareaClassName} id="roleAndObjectives" name="roleAndObjectives" maxLength={5000} rows={5} defaultValue={experience?.roleAndObjectives} /></FormField>
-        <FormField label="Process · 진행 과정" name="process"><textarea className={textareaClassName} id="process" name="process" maxLength={10000} rows={7} defaultValue={experience?.process} /></FormField>
-        <FormField label="Problems & Solutions · 문제 및 해결 과정" name="problemsAndSolutions"><textarea className={textareaClassName} id="problemsAndSolutions" name="problemsAndSolutions" maxLength={10000} rows={7} defaultValue={experience?.problemsAndSolutions} /></FormField>
-        <FormField label="Results & Learnings · 결과 및 배운 점" name="resultsAndLearnings"><textarea className={textareaClassName} id="resultsAndLearnings" name="resultsAndLearnings" maxLength={10000} rows={7} defaultValue={experience?.resultsAndLearnings} /></FormField>
+        <FormField label="Implementation & Process · 구현 및 실습 과정" name="process"><textarea className={textareaClassName} id="process" name="process" maxLength={10000} rows={7} defaultValue={experience?.process} /></FormField>
+        <FormField label="Troubleshooting · 문제 해결" name="problemsAndSolutions"><textarea className={textareaClassName} id="problemsAndSolutions" name="problemsAndSolutions" maxLength={10000} rows={7} defaultValue={experience?.problemsAndSolutions} /></FormField>
+        <FormField label="Results · 실습 결과" name="results"><textarea className={textareaClassName} id="results" name="results" maxLength={10000} rows={6} defaultValue={experience?.results} /></FormField>
+        <FormField label="Learnings · 배운 점" name="learnings"><textarea className={textareaClassName} id="learnings" name="learnings" maxLength={10000} rows={6} defaultValue={experience?.learnings} /></FormField>
       </fieldset>
 
       <fieldset className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 sm:p-8">

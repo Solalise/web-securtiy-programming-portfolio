@@ -43,31 +43,31 @@ async function parseGrowthEvent(formData: FormData): Promise<GrowthEventInput | 
 }
 
 function refreshGrowth(): void {
-  revalidatePath("/growth");
+  revalidatePath("/about");
 }
 
 export async function createGrowthEventAction(formData: FormData): Promise<void> {
   await requireAdmin();
   const input = await parseGrowthEvent(formData);
-  if (!input) redirect("/growth?error=invalid#growth-admin");
+  if (!input) redirect("/about?error=invalid#growth-admin");
   await createGrowthEvent(input);
   refreshGrowth();
-  redirect("/growth?saved=created#growth-admin");
+  redirect("/about?saved=created#growth-admin");
 }
 
 export async function updateGrowthEventAction(formData: FormData): Promise<void> {
   await requireAdmin();
   const id = text(formData, "databaseId", 100);
   const input = await parseGrowthEvent(formData);
-  if (!input) redirect("/growth?error=invalid#growth-admin");
+  if (!input) redirect("/about?error=invalid#growth-admin");
   await updateGrowthEvent(id, input);
   refreshGrowth();
-  redirect("/growth?saved=updated#growth-admin");
+  redirect("/about?saved=updated#growth-admin");
 }
 
 export async function deleteGrowthEventAction(formData: FormData): Promise<void> {
   await requireAdmin();
   await deleteGrowthEvent(text(formData, "databaseId", 100));
   refreshGrowth();
-  redirect("/growth?saved=deleted#growth-admin");
+  redirect("/about?saved=deleted#growth-admin");
 }

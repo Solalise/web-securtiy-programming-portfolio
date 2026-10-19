@@ -1,8 +1,15 @@
 export type ExperienceCategory = "activity" | "security" | "general";
+export type ExperienceStatus = "completed" | "in-progress";
 
 export type ExperienceReference = {
   label: string;
   url: string;
+};
+
+export type ExperienceDetailSection = {
+  title: string;
+  subtitle: string;
+  content: string;
 };
 
 export type Experience = {
@@ -11,6 +18,8 @@ export type Experience = {
   category: ExperienceCategory;
   summary: string;
   organization?: string;
+  environment?: string;
+  status?: ExperienceStatus;
   startDate?: string;
   endDate?: string;
   technologies: string[];
@@ -19,6 +28,9 @@ export type Experience = {
   process?: string;
   problemsAndSolutions?: string;
   resultsAndLearnings?: string;
+  results?: string;
+  learnings?: string;
+  detailSections?: ExperienceDetailSection[];
   images: string[];
   references: ExperienceReference[];
   featured: boolean;

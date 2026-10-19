@@ -4,9 +4,13 @@ import Image from "next/image";
 import { deletePortfolioItemAction, savePortfolioItemAction, updateAboutAction, updateProfileAction } from "@/actions/portfolio-content";
 import { auth } from "@/auth";
 import FormSubmitButton from "@/components/FormSubmitButton";
+import GrowthAdmin from "@/components/GrowthAdmin";
+import GrowthJourneyTimeline from "@/components/GrowthJourneyTimeline";
 import TechnologyUsage from "@/components/TechnologyUsage";
 import { getPortfolioItems, getSiteContent } from "@/lib/portfolio-content";
 import { getProjects } from "@/lib/projects";
+import { buildGrowthJourney, getGrowthEvents } from "@/lib/growth";
+import { getExperiences } from "@/lib/experiences";
 import { calculateTechnologyUsage } from "@/lib/technology-usage";
 import type { PortfolioItem, PortfolioItemKind } from "@/types/portfolio-content";
 
@@ -16,13 +20,14 @@ export const dynamic = "force-dynamic";
 const statusLabels = { planned: "예정", "in-progress": "진행 중", completed: "완료" } as const;
 
 export default async function AboutPage({ searchParams }: PageProps<"/about">) {
-  const [session, content, projects, awards, certifications, roadmap, params] = await Promise.all([
-    auth(), getSiteContent(), getProjects(), getPortfolioItems("award"), getPortfolioItems("certification"), getPortfolioItems("roadmap"), searchParams,
+  const [session, content, projects, experiences, growthEvents, awards, certifications, params] = await Promise.all([
+    auth(), getSiteContent(), getProjects(), getExperiences(), getGrowthEvents(), getPortfolioItems("award"), getPortfolioItems("certification"), searchParams,
   ]);
   const isAdmin = session?.user.role === "admin";
   const technologies = calculateTechnologyUsage(projects, content.about.extraTechnologies);
   const saved = Array.isArray(params.saved) ? params.saved[0] : params.saved;
   const error = Array.isArray(params.error) ? params.error[0] : params.error;
+  const { timeline } = buildGrowthJourney(projects, experiences, growthEvents);
 
   return (
     <div className="py-16 sm:py-24">
@@ -70,9 +75,9 @@ export default async function AboutPage({ searchParams }: PageProps<"/about">) {
         </div>
       </Section>
 
-      <Section id="roadmap" eyebrow="ROADMAP" title="Roadmap — 성장 로드맵">
-        {roadmap.length ? <ol className="relative ml-3 border-l border-slate-200 pl-7">{roadmap.map((item) => <li key={item.id} className="relative pb-8 last:pb-0"><span className={"absolute -left-[2.15rem] top-1 flex size-4 items-center justify-center rounded-full border-2 " + (item.status === "completed" ? "border-blue-600 bg-blue-600" : item.status === "in-progress" ? "border-blue-600 bg-white" : "border-slate-300 bg-white")}>{item.status === "completed" ? <span className="text-[8px] text-white">✓</span> : null}</span><article className={"rounded-xl border p-5 " + (item.status === "in-progress" ? "border-blue-200 bg-blue-50/40" : "border-slate-200 bg-white")}><div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-extrabold text-slate-950">{item.title}</h3><span className="text-xs font-bold text-blue-700">{item.status ? statusLabels[item.status] : "예정"}</span></div>{item.category ? <p className="mt-2 text-xs font-bold text-slate-400">{item.category} · {item.period}</p> : null}{item.description ? <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-600">{item.description}</p> : null}{isAdmin ? <ItemAdmin item={item} /> : null}</article></li>)}</ol> : <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-sm text-slate-500">등록된 로드맵이 없습니다.</p>}
-        {isAdmin ? <details className="mt-6 rounded-xl border border-blue-200 bg-blue-50 p-5"><summary className="cursor-pointer text-sm font-bold text-blue-700">로드맵 단계 추가</summary><ItemForm kind="roadmap" /></details> : null}
+      <Section id="growth" eyebrow="GROWTH TIMELINE" title="성장 과정">
+        <GrowthJourneyTimeline items={timeline} />
+        {isAdmin ? <GrowthAdmin events={growthEvents} projects={projects} experiences={experiences} /> : null}
       </Section>
     </div>
   );

@@ -13,6 +13,7 @@ import type {
   ExperienceCategory,
   ExperienceInput,
   ExperienceReference,
+  ExperienceStatus,
 } from "@/types/experience";
 
 const categories = new Set<ExperienceCategory>([
@@ -21,6 +22,7 @@ const categories = new Set<ExperienceCategory>([
   "general",
 ]);
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+const statuses = new Set<ExperienceStatus>(["completed", "in-progress"]);
 
 function getText(formData: FormData, name: string, maxLength: number): string {
   return String(formData.get(name) ?? "").trim().slice(0, maxLength);
@@ -61,10 +63,12 @@ function getReferences(formData: FormData): ExperienceReference[] {
 
 function parseExperienceForm(formData: FormData): {
   input?: ExperienceInput;
-  error?: "required" | "invalid-category" | "invalid-date" | "invalid-url";
+  error?: "required" | "invalid-category" | "invalid-status" | "invalid-date" | "invalid-url";
 } {
   const categoryValue = getText(formData, "category", 30) as ExperienceCategory;
   if (!categories.has(categoryValue)) return { error: "invalid-category" };
+  const status = getText(formData, "status", 20) as ExperienceStatus;
+  if (!statuses.has(status)) return { error: "invalid-status" };
 
   const title = getText(formData, "title", 120);
   const summary = getText(formData, "summary", 300);
@@ -93,6 +97,8 @@ function parseExperienceForm(formData: FormData): {
       category: categoryValue,
       summary,
       organization: getText(formData, "organization", 120) || undefined,
+      environment: getText(formData, "environment", 500) || undefined,
+      status,
       startDate: startDate || undefined,
       endDate: endDate || undefined,
       technologies: getList(formData, "technologies"),
@@ -101,6 +107,8 @@ function parseExperienceForm(formData: FormData): {
       process: getText(formData, "process", 10000) || undefined,
       problemsAndSolutions: getText(formData, "problemsAndSolutions", 10000) || undefined,
       resultsAndLearnings: getText(formData, "resultsAndLearnings", 10000) || undefined,
+      results: getText(formData, "results", 10000) || undefined,
+      learnings: getText(formData, "learnings", 10000) || undefined,
       images,
       references,
       featured: formData.get("featured") === "on",
@@ -112,7 +120,6 @@ function refreshExperiencePaths(id?: string): void {
   revalidatePath("/");
   revalidatePath("/experiences");
   revalidatePath("/admin/experiences");
-  revalidatePath("/growth");
   if (id) revalidatePath(`/experiences/${id}`);
 }
 

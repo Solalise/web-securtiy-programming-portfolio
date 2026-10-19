@@ -86,7 +86,6 @@ function revalidateProjectPaths(...slugs: string[]): void {
   revalidatePath("/projects");
   revalidatePath("/admin/projects");
   revalidatePath("/about");
-  revalidatePath("/growth");
 
   for (const slug of new Set(slugs)) {
     revalidatePath(`/projects/${slug}`);

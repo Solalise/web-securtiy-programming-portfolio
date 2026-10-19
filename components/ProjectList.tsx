@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import ProjectCard from "@/components/ProjectCard";
 import type { Project } from "@/types/project";
 
-const filters = ["전체", "웹", "보안", "AI", "백엔드"] as const;
+const filters = ["전체", "개인 프로젝트", "팀 프로젝트"] as const;
 
 type ProjectFilter = (typeof filters)[number];
 
@@ -15,33 +15,8 @@ type ProjectListProps = {
 
 function matchesFilter(project: Project, filter: ProjectFilter): boolean {
   if (filter === "전체") return true;
-
-  const searchableText = [
-    project.category,
-    project.summary,
-    project.problem,
-    project.role,
-    ...project.features,
-    ...project.techStack,
-  ]
-    .join(" ")
-    .toLowerCase();
-
-  if (filter === "웹") {
-    return /web|next\.js|react|tailwind/.test(searchableText);
-  }
-
-  if (filter === "보안") {
-    return /보안|취약|안전|도난|인증/.test(searchableText);
-  }
-
-  if (filter === "AI") {
-    return /\bai\b|openai/.test(searchableText);
-  }
-
-  return /백엔드|mongodb|postgresql|prisma|mongoose|auth\.js|api/.test(
-    searchableText,
-  );
+  const isTeamProject = project.teamSize?.includes("팀") ?? false;
+  return filter === "팀 프로젝트" ? isTeamProject : !isTeamProject;
 }
 
 export default function ProjectList({ projects }: ProjectListProps) {
@@ -80,7 +55,7 @@ export default function ProjectList({ projects }: ProjectListProps) {
           className="h-12 w-full rounded-lg border border-zinc-300 bg-white px-4 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
         />
 
-        <div className="mt-4 flex flex-wrap gap-2" aria-label="프로젝트 카테고리">
+        <div className="mt-4 flex flex-wrap gap-2" aria-label="프로젝트 유형">
           {filters.map((filter) => {
             const isActive = filter === activeFilter;
 

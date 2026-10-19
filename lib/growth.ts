@@ -150,10 +150,9 @@ export function buildGrowthJourney(
   }
   points.sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
 
+  // 성장 과정은 관리자가 작성한 기준점만 표시합니다. 프로젝트·실습 기록은
+  // 자동으로 섞지 않아, 연도별 타임라인의 내용과 순서를 직접 관리할 수 있습니다.
   const timeline = new Map<string, GrowthTimelineItem>();
-  for (const record of records.filter((record) => !linkedKeys.has(record.key))) {
-    timeline.set(record.key, { key: record.key, date: record.date, title: record.title, type: record.type, description: record.description, technologies: record.technologies, href: record.href });
-  }
   for (const anchor of anchors) {
     const linkedKey = anchor.linkedProjectId ? `project:${anchor.linkedProjectId}` : anchor.linkedExperienceId ? `experience:${anchor.linkedExperienceId}` : null;
     const linked = linkedKey ? recordMap.get(linkedKey) : undefined;

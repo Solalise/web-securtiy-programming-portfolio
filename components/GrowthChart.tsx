@@ -33,6 +33,10 @@ export default function GrowthChart({ points }: { points: GrowthChartPoint[] }) 
   }, "");
   const active = points.find((point) => point.id === activeId) ?? null;
   const military = coordinates.filter(({ point }) => point.type === "military");
+  const labelLevels = coordinates.map((coordinate, index) => {
+    if (index === 0 || coordinate.x - coordinates[index - 1].x >= 96) return 0;
+    return (index % 2) + 1;
+  });
 
   if (!points.length) {
     return <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-16 text-center"><p className="font-bold text-slate-800">등록된 성장 기준점이 없습니다.</p><p className="mt-2 text-sm text-slate-500">관리자가 입학·군복무·복학 등 실제 이력의 기준점을 등록하면 성장 곡선이 생성됩니다.</p></div>;
@@ -49,11 +53,11 @@ export default function GrowthChart({ points }: { points: GrowthChartPoint[] }) 
           })}
           {military.length >= 2 ? <g><rect x={military[0].x} y={top} width={military.at(-1)!.x - military[0].x} height={height - top - bottom} fill="#f1f5f9" opacity="0.8" /><text x={(military[0].x + military.at(-1)!.x) / 2} y={top + 18} textAnchor="middle" className="fill-slate-500 text-[11px] font-bold">군 복무 · 정체 구간</text></g> : null}
           <path d={line} fill="none" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
-          {coordinates.map(({ point, x, y }) => (
+          {coordinates.map(({ point, x, y }, index) => (
             <g key={point.id} tabIndex={0} role="button" aria-label={`${point.label}, ${point.title}, 성장 지표 ${point.growthValue}`} className="cursor-pointer outline-none" onMouseEnter={() => setActiveId(point.id)} onFocus={() => setActiveId(point.id)} onClick={() => setActiveId(point.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActiveId(point.id); } }}>
               <circle cx={x} cy={y} r={activeId === point.id ? 9 : 7} fill="#fff" stroke="#2563eb" strokeWidth="4"><title>{point.label} · {point.title} · {point.description} · 성장 지표 {point.growthValue}</title></circle>
-              <text x={x} y={height - 34} textAnchor="middle" className="fill-slate-700 text-[11px] font-bold">{point.label}</text>
-              <text x={x} y={height - 18} textAnchor="middle" className="fill-slate-400 text-[9px]">{point.title.length > 12 ? point.title.slice(0, 12) + "…" : point.title}</text>
+              <text x={x} y={height - 34 - labelLevels[index] * 28} textAnchor="middle" className="fill-slate-700 text-[11px] font-bold">{point.label}</text>
+              <text x={x} y={height - 18 - labelLevels[index] * 28} textAnchor="middle" className="fill-slate-400 text-[9px]">{point.title.length > 12 ? point.title.slice(0, 12) + "…" : point.title}</text>
             </g>
           ))}
           <text x="16" y="18" className="fill-slate-500 text-[11px] font-bold">성장 지표</text>
