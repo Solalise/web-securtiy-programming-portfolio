@@ -3,6 +3,55 @@ import type { Project } from "@/types/project";
 // MongoDB가 비어 있을 때 한 번 등록되는 초기 프로젝트 데이터입니다. 운영 중 수정은 관리자 페이지를 사용하세요.
 export const projects: Project[] = [
   {
+    id: "web-server-security",
+    title: "Next.js 웹 애플리케이션 개발 및 인증 시스템 구현",
+    summary:
+      "Next.js와 TypeScript로 풀스택 웹 애플리케이션을 단계적으로 구현하며 데이터베이스 연동과 사용자 인증의 동작 원리를 학습하는 전공 수업 실습 프로젝트입니다.",
+    category: "Web Development / Backend / Security",
+    techStack: [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS",
+      "shadcn/ui",
+      "MongoDB Atlas",
+      "Mongoose",
+      "Auth.js",
+      "bcrypt",
+      "GitHub",
+      "Vercel",
+    ],
+    thumbnail: "/images/projects/web-server-security.png",
+    overview:
+      "Full-Stack Web Development & Authentication\n\n웹서버보안프로그래밍 전공 수업에서 Next.js와 TypeScript를 활용하여 풀스택 웹 애플리케이션을 단계적으로 개발하는 프로젝트입니다. 기본 페이지 구성부터 동적 라우팅, Server Action, MongoDB 연동, 사용자 인증까지 기능을 확장하며 프론트엔드와 백엔드의 동작 원리를 학습하고 있습니다.\n\n특히 MongoDB를 활용한 데이터 영속성, bcrypt 기반 비밀번호 해싱, Auth.js 인증 처리를 중심으로 실제 웹 서비스에 필요한 개발 및 보안 기초를 익히고 있습니다.",
+    problem:
+      "Frontend\nReact 기반 컴포넌트, Next.js App Router, Tailwind CSS와 shadcn/ui를 활용해 페이지 UI를 구성하고 Server Component와 Client Component의 역할을 구분했습니다.\n\nBackend\nServer Action과 Route Handler, FormData 기반 입력 처리를 활용해 서버에서 데이터를 검증하고 처리하는 흐름을 학습했습니다.\n\nDatabase\nMongoDB Atlas와 Mongoose로 공지사항 데이터를 생성·조회하고, 개발 환경의 불필요한 중복 연결을 줄이기 위한 연결 캐싱 구조를 적용했습니다.\n\nAuthentication & Security\nAuth.js Credentials Provider, bcrypt, JWT 세션과 환경변수를 사용해 인증 정보와 데이터베이스 접속 정보를 안전하게 다루는 방식을 학습했습니다.",
+    features: [
+      "01. Next.js 프로젝트 환경 구축: App Router, TypeScript, Tailwind CSS 환경을 구성하고 Counter 및 About 페이지를 구현했습니다.",
+      "02. 동적 라우팅 및 서버 기능: 상품 목록·상세 페이지, loading.tsx 기반 로딩 UI, Server Action 좋아요 실습과 JSON Route Handler를 구현했습니다.",
+      "03. 공지사항 게시판: 목록·상세 조회와 글 작성 기능을 Server Action 및 FormData로 처리하고 작성 후 이동 흐름을 구성했습니다.",
+      "04. MongoDB 연동: 메모리 기반 공지사항 데이터를 MongoDB Atlas와 Mongoose 모델로 전환하고 연결 오류에 대비한 오류 처리를 구성했습니다.",
+      "05. 인증 시스템: Credentials Provider로 회원가입·로그인·로그아웃을 구현하고, bcrypt 해시 비교와 JWT 세션 기반 로그인 상태 표시를 적용했습니다.",
+    ],
+    role:
+      "평문 비밀번호를 저장하지 않고 bcrypt로 해싱하여 저장하며, 로그인 시 입력값과 해시를 비교합니다.\n\nMONGODB_URI와 AUTH_SECRET은 환경변수로 관리하고, 인증 실패 시 이메일 또는 비밀번호 중 어느 값이 틀렸는지 드러나지 않도록 동일한 오류 메시지를 사용합니다.\n\n사용자 입력은 서버에서 검증하고, 데이터베이스 오류가 발생하더라도 내부 연결 정보가 화면에 노출되지 않도록 구성했습니다. 인증(Authentication)과 인가(Authorization)의 차이도 함께 학습하고 있으며, 관리자 인가 기능은 아직 이 수업 프로젝트의 완료 항목으로 표기하지 않았습니다.",
+    troubleshooting:
+      "MongoDB Atlas의 SRV 연결은 DNS와 Network Access 설정의 영향을 받으므로 연결 문자열, 데이터베이스 사용자 권한, 네트워크 허용 설정을 함께 점검했습니다.\n\n현재는 수업 진도에 맞춰 기능을 확장 중이며, 이후 사용자별 접근 권한 제어와 추가 웹 보안 기능을 학습하며 이 상세 페이지에 기록을 이어갈 예정입니다.",
+    learned: [
+      "사용자 요청이 서버에서 처리되어 데이터베이스에 저장되는 전체 흐름",
+      "Server Action과 데이터베이스 접근 계층을 분리하는 방법",
+      "App Router의 동적 라우팅과 Server·Client Component 역할 구분",
+      "bcrypt 해싱, JWT 세션, 환경변수 보호를 인증 흐름에 적용하는 방법",
+      "인증과 인가가 서로 다른 보안 책임이라는 점",
+    ],
+    githubUrl: "https://github.com/Solalise/web-server-security-4week",
+    demoUrl: "https://web-server-security-4week.vercel.app/",
+    period: "2026.09 ~ 진행 중",
+    teamSize: "개인 실습 프로젝트 · 대학교 전공 수업",
+    status: "진행중",
+    featured: false,
+  },
+  {
     id: "repotutor",
     title: "RepoTutor",
     summary:
@@ -224,6 +273,7 @@ export function getProjectById(id: string): Project | undefined {
 
 export function getProjectStatusLabel(project: Pick<Project, "id" | "status">): string {
   const statusByProjectId: Record<string, string> = {
+    "web-server-security": "진행중",
     repotutor: "진행중",
     portfolio: "진행중",
     majormate: "진행중",

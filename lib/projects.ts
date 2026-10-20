@@ -22,16 +22,21 @@ export class ProjectSlugConflictError extends Error {}
 export class ProjectNotFoundError extends Error {}
 
 type ProjectSeedState = {
+  version: string;
   promise: Promise<void> | null;
 };
+
+// 새 초기 프로젝트를 추가했을 때 개발 서버의 전역 캐시도 한 번 갱신합니다.
+const projectSeedVersion = "web-server-security-v1";
 
 const globalForProjectSeed = globalThis as typeof globalThis & {
   projectSeedState?: ProjectSeedState;
 };
 
-const seedState = globalForProjectSeed.projectSeedState ?? {
-  promise: null,
-};
+const seedState =
+  globalForProjectSeed.projectSeedState?.version === projectSeedVersion
+    ? globalForProjectSeed.projectSeedState
+    : { version: projectSeedVersion, promise: null };
 
 globalForProjectSeed.projectSeedState = seedState;
 

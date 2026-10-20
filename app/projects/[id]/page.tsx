@@ -34,6 +34,25 @@ export default async function ProjectDetailPage({
     notFound();
   }
 
+  const isCourseProject = project.id === "web-server-security";
+  const sectionLabels = isCourseProject
+    ? {
+        overview: "Overview · 개요",
+        problem: "Environment & Tools · 개발 환경 및 기술",
+        features: "Implementation & Process · 주요 구현 과정",
+        role: "Security Considerations · 보안 관점에서 학습한 내용",
+        troubleshooting: "현재 진행 및 확장 계획",
+        learned: "What I Learned · 학습 성과",
+      }
+    : {
+        overview: "개요",
+        problem: "문제",
+        features: "핵심 기능",
+        role: "내 역할",
+        troubleshooting: "트러블슈팅",
+        learned: "배운 점",
+      };
+
   return (
     <article className="py-12 sm:py-20">
       <nav aria-label="현재 위치" className="mb-8 text-sm text-zinc-500">
@@ -75,6 +94,7 @@ export default async function ProjectDetailPage({
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                  style={{ color: "#ffffff" }}
                 >
                   GitHub
                 </a>
@@ -86,7 +106,7 @@ export default async function ProjectDetailPage({
                   rel="noreferrer"
                   className="inline-flex min-h-11 items-center justify-center rounded-lg border border-zinc-300 bg-white px-5 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-50"
                 >
-                  라이브 데모
+                  {project.id === "web-server-security" ? "Vercel" : "라이브 데모"}
                 </a>
               )}
             </div>
@@ -104,15 +124,15 @@ export default async function ProjectDetailPage({
 
       <div className="mt-16 grid gap-8 border-t border-zinc-200 pt-12 sm:mt-20 sm:pt-16 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start">
         <div className="space-y-6">
-          <DetailSection title="개요">
+          <DetailSection title={sectionLabels.overview}>
             <p>{project.overview}</p>
           </DetailSection>
 
-          <DetailSection title="문제">
+          <DetailSection title={sectionLabels.problem}>
             <p>{project.problem}</p>
           </DetailSection>
 
-          <DetailSection title="핵심 기능">
+          <DetailSection title={sectionLabels.features}>
             <CheckList items={project.features} columns />
           </DetailSection>
 
@@ -129,15 +149,15 @@ export default async function ProjectDetailPage({
             </ul>
           </DetailSection>
 
-          <DetailSection title="내 역할">
+          <DetailSection title={sectionLabels.role}>
             <p>{project.role}</p>
           </DetailSection>
 
-          <DetailSection title="트러블슈팅">
+          <DetailSection title={sectionLabels.troubleshooting}>
             <p>{project.troubleshooting}</p>
           </DetailSection>
 
-          <DetailSection title="배운 점">
+          <DetailSection title={sectionLabels.learned}>
             <CheckList items={project.learned} />
           </DetailSection>
         </div>
@@ -168,7 +188,7 @@ export default async function ProjectDetailPage({
                   rel="noreferrer"
                   className="mt-2 block py-1 text-zinc-700 transition-colors hover:text-blue-600"
                 >
-                  라이브 데모 →
+                  {project.id === "web-server-security" ? "Vercel →" : "라이브 데모 →"}
                 </a>
               )}
             </div>
